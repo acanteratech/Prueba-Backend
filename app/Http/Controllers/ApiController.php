@@ -8,7 +8,6 @@ class ApiController extends Controller
 {
     public function shortUrls(ShortUrlsRequest $request): \Illuminate\Http\JsonResponse
     {
-        $auth = $request->header('Authorization', '');
         $token = $request->bearerToken();
 
         if ($this->checkToken($token)) {
