@@ -8,36 +8,43 @@ class ApiController extends Controller
 {
     public function shortUrls(ShortUrlsRequest $request): \Illuminate\Http\JsonResponse
     {
+        $auth = $request->header('Authorization', '');
         $token = $request->bearerToken();
 
-        if ($this->checkToken($token)) {
-            $originalUrl = $request->url;
+        if (str_contains($auth, 'Bearer')) {
+            if ($this->checkToken($token)) {
+                $originalUrl = $request->url;
 
-            $curl = curl_init();
+                $curl = curl_init();
 
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://tinyurl.com/api-create.php?url='.$originalUrl,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'GET',
-                CURLOPT_SSL_VERIFYPEER => false
-            ));
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => 'https://tinyurl.com/api-create.php?url='.$originalUrl,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'GET',
+                    CURLOPT_SSL_VERIFYPEER => false
+                ));
 
-            $response = curl_exec($curl);
+                $response = curl_exec($curl);
 
-            curl_close($curl);
+                curl_close($curl);
+
+                return response()->json([
+                    'url' => $response
+                ]);
+            }
 
             return response()->json([
-                'url' => $response
+                'message' => 'Token Invalid'
             ]);
         }
 
         return response()->json([
-            'message' => 'Token Invalid'
+            'message' => 'Authorization Required'
         ]);
     }
 
