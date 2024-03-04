@@ -8,6 +8,7 @@ class ApiController extends Controller
 {
     public function shortUrls(ShortUrlsRequest $request): \Illuminate\Http\JsonResponse
     {
+        $auth = $request->header('Authorization', '');
         $token = $request->bearerToken();
 
         if ($this->checkToken($token)) {
@@ -54,7 +55,7 @@ class ApiController extends Controller
     }
 
     /*
-     * Checks brackets are in order and properly closed and there is no unalloyed chars
+     * Checks brackets are in order and properly closed and there is no unallowed chars
      */
     private function checkBrackets($token): bool
     {
