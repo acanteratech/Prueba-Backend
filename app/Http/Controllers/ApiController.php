@@ -12,7 +12,7 @@ class ApiController extends Controller
         $token = $request->bearerToken();
 
         if (str_contains($auth, 'Bearer')) {
-            if ($this->checkToken($token)) {
+            if (empty($token) || $this->checkToken($token)) {
                 $originalUrl = $request->url;
 
                 $curl = curl_init();
@@ -49,21 +49,9 @@ class ApiController extends Controller
     }
 
     /*
-     * Checks if token is an empty string, if not calls the bracket checker
-     */
-    private function checkToken($token): bool
-    {
-        if (empty($token)) {
-            return true;
-        } else {
-            return $this->checkBrackets($token);
-        }
-    }
-
-    /*
      * Checks brackets are in order and properly closed and there is no unallowed chars
      */
-    private function checkBrackets($token): bool
+    private function checkToken($token): bool
     {
         $string = str_split($token);
         $stack = array();
