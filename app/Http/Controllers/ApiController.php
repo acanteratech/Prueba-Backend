@@ -91,8 +91,12 @@ class ApiController extends Controller
                 default:
                     $valid = false;
             }
+
+            if (!$valid) {
+                return false;
+            }
         }
 
-        return $valid && empty($stack);
+        return empty($stack);
     }
 }
